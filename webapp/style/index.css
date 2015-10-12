@@ -1,0 +1,51 @@
+.bs-docs-nav {
+    margin-bottom: 0;
+    background-color: #0275d8;
+    border-bottom: 0;
+    color: #fff;
+}
+.bs-docs-nav a {
+    color: #fff;
+}
+.bs-docs-nav input {
+    color: #000;
+}
+#bs-navbar .nav>li>a:focus,#bs-navbar .nav>li>a:hover {
+    background-color: #0275d8;
+}
+
+.nav>li>input {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    border: none;
+    line-height: 20px;
+}
+.navbar-nav>li>input {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin: 10px;
+}
+
+
+.container {
+    width: 100%;
+}
+.container .left {
+    width: 49%;
+    float: left;
+}
+.container .right{
+    width: 49%;
+    float: right;
+}
+
+#allmap{
+    height: 300px;
+    border: solid 1px #000;        
+}
+
+
+@media (min-width: 768px){
+    
+}
