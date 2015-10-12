@@ -4,17 +4,23 @@ $(document).ready(function () {
 
     window.myapp.lushuViewModel = (function (ko) {
 
+        var self = this;
+
         var dayList = ko.observableArray(),
             error = ko.observable(),
             startAdds = ko.observable(),
             endAdds = ko.observable(),
-
             contacts = ko.observableArray(),
             points = ko.observableArray(),      //new BMap.Point(106.521436,29.532288)
 
             addDay = function (day) {
             },
             removeDay = function (day) {
+            },
+            removePoint = function (i) {
+
+                self.myapp.lushuViewModel.contacts.remove(this);
+
             };
 
         var viewmodel = {
@@ -23,49 +29,31 @@ $(document).ready(function () {
             dayList: dayList,
             error: error,
             addDay: addDay,
-            contacts: contacts
+            contacts: contacts,
+            points: points,
+            removePoint: removePoint
         };
 
         return viewmodel;
     })(ko);
 
     var vmmodel = window.myapp.lushuViewModel;
-    vmmodel.startAdds = "上海";
-    vmmodel.endAdds = "北京";
+    //vmmodel.startAdds = "上海";
+    //vmmodel.endAdds = "北京";
+    //vmmodel.contacts.push({ name: "北京", point: new BMap.Point(39.910849, 116.421894) });
 
     ko.applyBindings(vmmodel);
 
 
-
-    // 百度地图API功能
-    var map = new BMap.Map("allmap");
-    map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
-    map.enableScrollWheelZoom(true);
-
-    var p1 = new BMap.Point(116.301934, 39.977552);
-    var p2 = new BMap.Point(116.508328, 39.919141);
-
-    var driving = new BMap.DrivingRoute(map, { 
-        renderOptions: { 
-            map: map, 
-            autoViewport: true 
-        } 
-    });
-    
-    driving.search(p1, p2, { waypoints: ["中华民族园", "对外经贸大学"] });//waypoints表示途经点
-
-
-    
-    
     // 百度地图API功能
     var map = new BMap.Map("allmap");
     var geoc = new BMap.Geocoder();     //根据地址描述获得坐标
     //三种驾车策略：最少时间，最短距离，避开高速
     var routePolicy = [BMAP_DRIVING_POLICY_LEAST_TIME, BMAP_DRIVING_POLICY_LEAST_DISTANCE, BMAP_DRIVING_POLICY_AVOID_HIGHWAYS];
     var renderOptions = {
-            map: map,
-            autoViewport: true,
-            enableDragging: true //起终点可进行拖拽
+        map: map,
+        autoViewport: true,
+        enableDragging: false //起终点是否进行拖拽
     };
     var drivingRouteOptions = {
         renderOptions: renderOptions,
@@ -90,17 +78,45 @@ $(document).ready(function () {
         {
             text: '加入行程',
             callback: function (h, p) {
-                console.log(h, p);
-                //h.lat ,h.lng,
-                //p.x,p.y
+
+                console.log(h, p);                          //h.lat ,h.lng,     //p.x,p.y
+
                 geoc.getLocation(h, function (rs) {
                     var addComp = rs.addressComponents;
                     var straddFull = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
-                    console.log(addComp);
+                    //console.log(addComp);
+                    var point = new BMap.Point(h.lng, h.lat);
+                    addMarker(point);
+                    window.myapp.lushuViewModel.contacts.push({ name: straddFull, point: point });
 
-                    window.myapp.lushuViewModel.contacts.push({ name: straddFull });
+                });
+            }
+        },
+        {
+            text: '设为起点',
+            callback: function (h, p) {
+                geoc.getLocation(h, function (rs) {
+                    var addComp = rs.addressComponents;
+                    var straddFull = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
+                    //console.log(addComp);
+                    var point = new BMap.Point(h.lng, h.lat);
+                    addMarker(point);
+                    window.myapp.lushuViewModel.contacts.push({ name: straddFull, point: point });
 
-                    $("#newAdd").append("<li>" + straddFull + "</li>");
+                });
+            }
+        },
+        {
+            text: '设为终点',
+            callback: function (h, p) {
+                geoc.getLocation(h, function (rs) {
+                    var addComp = rs.addressComponents;
+                    var straddFull = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
+                    //console.log(addComp);
+                    var point = new BMap.Point(h.lng, h.lat);
+                    addMarker(point);
+                    window.myapp.lushuViewModel.contacts.push({ name: straddFull, point: point });
+
                 });
             }
         }
@@ -110,6 +126,7 @@ $(document).ready(function () {
     }
     map.addContextMenu(menu);
 
+    /*
     var iscreatr = false;
     map.addEventListener("click", function (e) {
         if (iscreatr == true) return;
@@ -127,9 +144,17 @@ $(document).ready(function () {
             console.log(e.point.lng + ", " + e.point.lat);//打印拖动结束坐标  
         });
     });
+    */
+
+    function addMarker(p) {
+        var marker = new BMap.Marker(p);
+        var label = new BMap.Label("新增途经点", { offset: new BMap.Size(20, -10) });
+        marker.setLabel(label)
+        map.addOverlay(marker);
+    }
 
 
-    $("#btnBuildPath").bind("click", function () {
+    $("#btnBuildPath,#driveSearchBtn").bind("click", function () {
         buildPath();
     });
 
@@ -140,10 +165,28 @@ $(document).ready(function () {
 
     function buildPath() {
 
+        var points = window.myapp.lushuViewModel.contacts();
+        var arrPoints = [];
+
+        $.each(points, function (i, o) {
+            var t1 = o.point;
+            var p = new BMap.Point(t1.lng, t1.lat);
+            arrPoints.push(p);
+        });
+
+        var p1 = arrPoints.shift();
+        var p2 = arrPoints.pop();
+
+        map.clearOverlays();
+        driving.search(p1, p2, { waypoints: arrPoints });
+
+        /*
         var start = $("#tbStartAdd").val();
         var end = $("#tbEndAdd").val();
-        map.clearOverlays();        
+        map.clearOverlays();
         search(start, end);
+        return;
+        */
     }
 
 });

@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -74,7 +74,7 @@
         .route-search-box .route-input-box {
             display: inline-block;
             vertical-align: middle;
-            width: 211px;
+            width: 300px;
             position: relative;
         }
         .route-search-box .route-input-box .start i, .route-search-box .route-input-box .through i {
@@ -99,7 +99,7 @@
             border-bottom: 0;
         }        
         .route-search-box .route-input-box input {
-            width: 186px;
+            width: 276px;
             height: 30px;
             line-height: 26px;
             display: inline-block;
@@ -111,7 +111,7 @@
             vertical-align: middle;
         }
         #drive_search_box .start input, #drive_search_box .through input {
-            width: 175px;
+            width: 276px;
         }
         .route-search-box .route-input-box .route-input-mask-for-ie8 {
             position: absolute;
@@ -214,7 +214,7 @@
 
                 <div class="col-md-6" style="overflow:auto; height:100%; padding-bottom:20px;">
 
-                    <div class="container-fluid" style="margin:10px">
+                    <!--<div class="container-fluid" style="margin:10px">
                         <div class="row">
                             <form>
                                 <div class="col-md-5">
@@ -231,43 +231,56 @@
 
                             </form>
                         </div>
-                    </div>
+                    </div>-->
                     
                     <div class="container-fluid" style="margin:10px;">
-                        <div id="drive_search_box" class="route-search-box" style="width:326px;">
+                        <div id="drive_search_box" class="route-search-box">
                             <form class="route-search-from" name="drive_form">
-                                
+
                                 <div class="route-input-box">
                                     
                                     <p class="route-input start">
                                         <i></i>
-                                        <input type="text" name="drive_start_wd" id="drive_start_input" value="" placeholder="请输入驾车起点" autocomplete="off" maxlength="256" data-from="start">
-                                        <span id="drive-add-btn" class="route-input-add" title="添加途经点"></span>
+                                        <input type="text" name="drive_start_wd" id="drive_start_input" value="" placeholder="请输入驾车起点" autocomplete="off" maxlength="256" data-from="start" data-bind="value:name">
+                                        <span id="drive-add-btn" class="route-input-add" title="移除途经点"></span>
                                     </p>
+
+                                    <div data-bind="foreach: contacts">
+                                        <p class="route-input through">
+                                            <i></i>
+                                            <input type="text" name="drive_through_wd" value="" placeholder="请输入驾车途经点" autocomplete="off" maxlength="256" data-from="through" data-bind="value:name">
+                                            <span class="route-input-mask-for-ie8"></span>
+                                            <span class="route-input-remove" data-index="0" title="移除途经点" data-bind="click:$parent.removePoint"></span>
+                                        </p>
+
+                                    </div>
+
+                                    <p class="route-input end">
+                                        <i></i>
+                                        <input type="text" name="drive_end_wd" id="drive_end_input" value="" placeholder="请输入驾车终点" autocomplete="off" maxlength="256" data-from="end">
+                                    </p>
+                                    <!--
                                     
-                                    <p class="route-input through">                                        
+                                        <p class="route-input through">                                        
                                         <i></i>
                                         <input type="text" name="drive_through_wd" value="" placeholder="请输入驾车途经点" autocomplete="off" maxlength="256" data-from="through">
                                         <span class="route-input-mask-for-ie8"></span>
                                         <span class="route-input-remove" data-index="0" title="移除途经点"></span>
-                                        
                                     </p>
-                                    
                                     <p class="route-input through">
                                         <i></i>
                                         <input type="text" name="drive_through_wd" value="" placeholder="请输入驾车途经点" autocomplete="off" maxlength="256" data-from="through">
                                         <span class="route-input-mask-for-ie8"></span>
                                         <span class="route-input-remove" data-index="0" title="移除途经点"></span>
                                     </p>
-                                    
                                     <p class="route-input end">
                                         <i></i>
                                         <input type="text" name="drive_end_wd" id="drive_end_input" value="" placeholder="请输入驾车终点" autocomplete="off" maxlength="256" data-from="end">
-                                    </p>
+                                    </p>-->
                                     
                                 </div>
                                 
-                                <input class="route-submit" value="搜索" id="driveSearchBtn" title="" type="submit">
+                                <input class="route-submit" value="搜索" id="driveSearchBtn" title="" type="button">
 
                             </form>
                         </div>
@@ -297,8 +310,8 @@
                                         </h2>
                                         <ul class="tourlist" data-bind="foreach: contacts">
                                             <li>
-                                                <a data-bind="text:name">xxx</a>
-                                                <a href="#" style="float:right">删除</a>
+                                                <a data-bind="text:name">xxx</a> <!--(<span data-bind="text:point.lat"></span>,<span data-bind="text:point.lng"></span>)-->
+                                                <a href="#" style="float:right" data-bind="click:$parent.removePoint">删除</a>
                                             </li>
                                         </ul>
                                     </div>
