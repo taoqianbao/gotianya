@@ -10,6 +10,7 @@ $(document).ready(function () {
             endAdds = ko.observable(),
 
             contacts = ko.observableArray(),
+            points = ko.observableArray(),      //new BMap.Point(106.521436,29.532288)
 
             addDay = function (day) {
             },
@@ -44,22 +45,31 @@ $(document).ready(function () {
     var p1 = new BMap.Point(116.301934, 39.977552);
     var p2 = new BMap.Point(116.508328, 39.919141);
 
-    var driving = new BMap.DrivingRoute(map, { renderOptions: { map: map, autoViewport: true } });
+    var driving = new BMap.DrivingRoute(map, { 
+        renderOptions: { 
+            map: map, 
+            autoViewport: true 
+        } 
+    });
+    
     driving.search(p1, p2, { waypoints: ["中华民族园", "对外经贸大学"] });//waypoints表示途经点
 
-});
 
-
-$(document).ready(function () {
-
+    
+    
     // 百度地图API功能
     var map = new BMap.Map("allmap");
-    var geoc = new BMap.Geocoder();
+    var geoc = new BMap.Geocoder();     //根据地址描述获得坐标
     //三种驾车策略：最少时间，最短距离，避开高速
     var routePolicy = [BMAP_DRIVING_POLICY_LEAST_TIME, BMAP_DRIVING_POLICY_LEAST_DISTANCE, BMAP_DRIVING_POLICY_AVOID_HIGHWAYS];
+    var renderOptions = {
+            map: map,
+            autoViewport: true,
+            enableDragging: true //起终点可进行拖拽
+    };
     var drivingRouteOptions = {
         renderOptions: renderOptions,
-        policy: route,
+        policy: routePolicy[0],
         onSearchComplete: function (results) {
             console.log("onSearchComplete", arguments);
         },
@@ -123,15 +133,7 @@ $(document).ready(function () {
         buildPath();
     });
 
-    function search(start, end, route) {
-
-        var renderOptions = {
-            map: map,
-            autoViewport: true,
-            enableDragging: true //起终点可进行拖拽
-        };
-
-        
+    function search(start, end) {
 
         driving.search(start, end);
     }
@@ -140,10 +142,8 @@ $(document).ready(function () {
 
         var start = $("#tbStartAdd").val();
         var end = $("#tbEndAdd").val();
-
-        map.clearOverlays();
-        var i = 0;   //0=最小时间，1=最短距离，2=避开高速
-        search(start, end, routePolicy[i]);
+        map.clearOverlays();        
+        search(start, end);
     }
 
 });

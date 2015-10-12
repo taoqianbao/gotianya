@@ -1,5 +1,4 @@
-﻿<html>
-
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -59,6 +58,110 @@
         }
 
     </style>
+    
+    <style type="text/css">
+        .route-search-box input:focus {
+            outline: none;
+        } 
+        .route-search-box *{
+            box-sizing: content-box;
+        }        
+        .route-search-box form {
+            position: relative;
+            font-size: 13px;
+            border-bottom: 1px solid #dee1e3;
+        }
+        .route-search-box .route-input-box {
+            display: inline-block;
+            vertical-align: middle;
+            width: 211px;
+            position: relative;
+        }
+        .route-search-box .route-input-box .start i, .route-search-box .route-input-box .through i {
+            background: url(http://webmap1.map.bdstatic.com/wolfman/static/common/images/ui3/mo_banner_ba37b5d.png) no-repeat -44px -210px;
+        }
+        .route-search-box .route-input-box .end i {
+            background: url(http://webmap1.map.bdstatic.com/wolfman/static/common/images/ui3/mo_banner_ba37b5d.png) no-repeat -57px -210px;
+        }
+        .route-search-box .route-input-box i {
+            display: inline-block;
+            width: 11px;
+            height: 11px;
+            position: relative;
+            top: 3px;
+            top: 5px/0;
+        }
+        
+        .pc #route_search_box, .pc #route_search_box input {
+            font-family: Arial,Helvetica,"Microsoft YaHei",sans-serif;
+        }
+        #bus_end_input, #drive_end_input, #walk_end_input, #bike_end_input {
+            border-bottom: 0;
+        }        
+        .route-search-box .route-input-box input {
+            width: 186px;
+            height: 30px;
+            line-height: 26px;
+            display: inline-block;
+            border: 0;
+            border-bottom: 1px solid #eaebed;
+            font-size: 13px;
+            color: #333;
+            padding: 5px 0 5px 5px;
+            vertical-align: middle;
+        }
+        #drive_search_box .start input, #drive_search_box .through input {
+            width: 175px;
+        }
+        .route-search-box .route-input-box .route-input-mask-for-ie8 {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            background: #fff;
+            right: 0;
+            top: 0;
+        }
+        .route-search-box p {
+            position: relative;
+        }
+        .route-search-box .route-input-box .route-input-add {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: url(http://webmap1.map.bdstatic.com/wolfman/static/common/images/ui3/mo_banner_ba37b5d.png) no-repeat -1px -223px;
+            right: 10px;
+            top: 14px;
+            cursor: pointer;
+        }
+        .route-search-box .route-input-box .route-input-remove {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: url(http://webmap1.map.bdstatic.com/wolfman/static/common/images/ui3/mo_banner_ba37b5d.png) no-repeat -19px -223px;
+            right: 10px;
+            top: 14px;
+            cursor: pointer;
+        }
+        .route-submit {
+            background: #F5F7FA;
+            border: 1px solid #f2f2f2;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            color: #999;
+            position: absolute;
+            top: 1px;
+            bottom: 1px;
+            right: 1px;
+            width: 54px;
+        }
+        .route-submit:hover {
+            background-color: #3385ff;
+            color: #fff;
+        }
+    
+    </style>
+    
     <script type="text/javascript" charset="utf-8" src="js/ueditor/ueditor.config.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/ueditor/ueditor.all.min.js"> </script>
     <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
@@ -129,6 +232,47 @@
                             </form>
                         </div>
                     </div>
+                    
+                    <div class="container-fluid" style="margin:10px;">
+                        <div id="drive_search_box" class="route-search-box" style="width:326px;">
+                            <form class="route-search-from" name="drive_form">
+                                
+                                <div class="route-input-box">
+                                    
+                                    <p class="route-input start">
+                                        <i></i>
+                                        <input type="text" name="drive_start_wd" id="drive_start_input" value="" placeholder="请输入驾车起点" autocomplete="off" maxlength="256" data-from="start">
+                                        <span id="drive-add-btn" class="route-input-add" title="添加途经点"></span>
+                                    </p>
+                                    
+                                    <p class="route-input through">                                        
+                                        <i></i>
+                                        <input type="text" name="drive_through_wd" value="" placeholder="请输入驾车途经点" autocomplete="off" maxlength="256" data-from="through">
+                                        <span class="route-input-mask-for-ie8"></span>
+                                        <span class="route-input-remove" data-index="0" title="移除途经点"></span>
+                                        
+                                    </p>
+                                    
+                                    <p class="route-input through">
+                                        <i></i>
+                                        <input type="text" name="drive_through_wd" value="" placeholder="请输入驾车途经点" autocomplete="off" maxlength="256" data-from="through">
+                                        <span class="route-input-mask-for-ie8"></span>
+                                        <span class="route-input-remove" data-index="0" title="移除途经点"></span>
+                                    </p>
+                                    
+                                    <p class="route-input end">
+                                        <i></i>
+                                        <input type="text" name="drive_end_wd" id="drive_end_input" value="" placeholder="请输入驾车终点" autocomplete="off" maxlength="256" data-from="end">
+                                    </p>
+                                    
+                                </div>
+                                
+                                <input class="route-submit" value="搜索" id="driveSearchBtn" title="" type="submit">
+
+                            </form>
+                        </div>
+                    </div>
+
 
                     <div>
                         <div style="margin-bottom:10px;">
