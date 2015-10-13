@@ -1,27 +1,27 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebSiteGoTianYa", ".", "{5EFE26C9-2D47-420F-836B-FCDD63A2B70B}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_51321"
-		Debug.AspNetCompiler.PhysicalPath = "..\gotianya\"
+		Debug.AspNetCompiler.PhysicalPath = "..\WebSiteGoTianYa\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51321\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/localhost_51321"
-		Release.AspNetCompiler.PhysicalPath = "..\gotianya\"
+		Release.AspNetCompiler.PhysicalPath = "..\WebSiteGoTianYa\"
 		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_51321\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "51321"
-		SlnRelativePath = "..\gotianya\"
+		SlnRelativePath = "..\WebSiteGoTianYa\"
 	EndProjectSection
 EndProject
 Global

@@ -8,8 +8,8 @@ $(document).ready(function () {
 
         var dayList = ko.observableArray(),
             error = ko.observable(),
-            startAdds = ko.observable(),
-            endAdds = ko.observable(),
+            startAdds = ko.observable({ name: "", point: null }),
+            endAdds = ko.observable({ name: "", point: null }),
             contacts = ko.observableArray(),
             points = ko.observableArray(),      //new BMap.Point(106.521436,29.532288)
 
@@ -20,7 +20,6 @@ $(document).ready(function () {
             removePoint = function (i) {
 
                 self.myapp.lushuViewModel.contacts.remove(this);
-
             };
 
         var viewmodel = {
@@ -37,12 +36,10 @@ $(document).ready(function () {
         return viewmodel;
     })(ko);
 
-    var vmmodel = window.myapp.lushuViewModel;
-    //vmmodel.startAdds = "上海";
-    //vmmodel.endAdds = "北京";
-    //vmmodel.contacts.push({ name: "北京", point: new BMap.Point(39.910849, 116.421894) });
+    ko.applyBindings(window.myapp.lushuViewModel);
 
-    ko.applyBindings(vmmodel);
+    window.myapp.lushuViewModel.dayList.push({ dayNumber: 1, isactive: true, isremoveable: false, contacts: [] });
+    window.myapp.lushuViewModel.dayList.push({ dayNumber: 2, isactive: false, isremoveable: true, contacts: [] });
 
 
     // 百度地图API功能
@@ -79,14 +76,14 @@ $(document).ready(function () {
             text: '加入行程',
             callback: function (h, p) {
 
-                console.log(h, p);                          //h.lat ,h.lng,     //p.x,p.y
+                console.log(h, p);  //h.lat ,h.lng,     //p.x,p.y
 
                 geoc.getLocation(h, function (rs) {
                     var addComp = rs.addressComponents;
                     var straddFull = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
                     //console.log(addComp);
                     var point = new BMap.Point(h.lng, h.lat);
-                    addMarker(point);
+                    addMarker(point, "新增途经点");
                     window.myapp.lushuViewModel.contacts.push({ name: straddFull, point: point });
 
                 });
@@ -98,11 +95,9 @@ $(document).ready(function () {
                 geoc.getLocation(h, function (rs) {
                     var addComp = rs.addressComponents;
                     var straddFull = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
-                    //console.log(addComp);
                     var point = new BMap.Point(h.lng, h.lat);
-                    addMarker(point);
-                    window.myapp.lushuViewModel.contacts.push({ name: straddFull, point: point });
-
+                    addMarker(point, "起点");
+                    window.myapp.lushuViewModel.startAdds({ name: straddFull, point: point });//;
                 });
             }
         },
@@ -112,11 +107,9 @@ $(document).ready(function () {
                 geoc.getLocation(h, function (rs) {
                     var addComp = rs.addressComponents;
                     var straddFull = addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber;
-                    //console.log(addComp);
                     var point = new BMap.Point(h.lng, h.lat);
-                    addMarker(point);
-                    window.myapp.lushuViewModel.contacts.push({ name: straddFull, point: point });
-
+                    addMarker(point, "终点");
+                    window.myapp.lushuViewModel.endAdds({ name: straddFull, point: point });//
                 });
             }
         }
@@ -146,15 +139,15 @@ $(document).ready(function () {
     });
     */
 
-    function addMarker(p) {
+    function addMarker(p, labeltext) {
         var marker = new BMap.Marker(p);
-        var label = new BMap.Label("新增途经点", { offset: new BMap.Size(20, -10) });
+        var label = new BMap.Label(labeltext, { offset: new BMap.Size(20, -10) });
         marker.setLabel(label)
         map.addOverlay(marker);
     }
 
 
-    $("#btnBuildPath,#driveSearchBtn").bind("click", function () {
+    $("#driveSearchBtn").bind("click", function () {
         buildPath();
     });
 
@@ -174,19 +167,11 @@ $(document).ready(function () {
             arrPoints.push(p);
         });
 
-        var p1 = arrPoints.shift();
-        var p2 = arrPoints.pop();
+        var p1 = window.myapp.lushuViewModel.startAdds();
+        var p2 = window.myapp.lushuViewModel.endAdds();
 
         map.clearOverlays();
-        driving.search(p1, p2, { waypoints: arrPoints });
-
-        /*
-        var start = $("#tbStartAdd").val();
-        var end = $("#tbEndAdd").val();
-        map.clearOverlays();
-        search(start, end);
-        return;
-        */
+        driving.search(p1.point, p2.point, { waypoints: arrPoints });
     }
 
 });
@@ -285,9 +270,9 @@ $(document).ready(function () {
     });
 
     //resize
-    $("#mainContainer").height($(window).height() - 50);
+    $("#allmap").height($(window).height() - 50);
     $(window).resize(function () {
-        $("#mainContainer").height($(window).height() - 50);
+        $("#allmap").height($(window).height() - 50);
     });
 
 });
