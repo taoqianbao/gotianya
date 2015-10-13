@@ -1,3 +1,9 @@
+function DayModel() {
+    this.dayNumber = 1;
+    this.isactive = true;
+    this.contacts = [];
+}
+
 $(document).ready(function () {
 
     window.myapp = {};
@@ -13,23 +19,34 @@ $(document).ready(function () {
             contacts = ko.observableArray(),
             points = ko.observableArray(),      //new BMap.Point(106.521436,29.532288)
 
-            addDay = function (day) {
-            },
-            removeDay = function (day) {
-            },
+            
             removePoint = function (i) {
 
                 self.myapp.lushuViewModel.contacts.remove(this);
+            },
+            daySetActive = function (i) {
+
+                $.each(dayList, function (i, o) {
+
+                    console.log(o);
+
+                });
+
             };
+
 
         var viewmodel = {
             startAdds: startAdds,
             endAdds: endAdds,
-            dayList: dayList,
-            error: error,
-            addDay: addDay,
             contacts: contacts,
+
+            dayList: dayList,
+
+            dayActive: daySetActive,
+
+            error: error,
             points: points,
+
             removePoint: removePoint
         };
 
@@ -38,8 +55,11 @@ $(document).ready(function () {
 
     ko.applyBindings(window.myapp.lushuViewModel);
 
-    window.myapp.lushuViewModel.dayList.push({ dayNumber: 1, isactive: true, isremoveable: false, contacts: [] });
-    window.myapp.lushuViewModel.dayList.push({ dayNumber: 2, isactive: false, isremoveable: true, contacts: [] });
+    var d1 = new DayModel();
+    d1.dayNumber = 1;
+    d1.isactive = true;
+    window.myapp.lushuViewModel.dayList.push(d1);
+    //window.myapp.lushuViewModel.dayList.push({ dayNumber: 2, isactive: false,  contacts: [] });
 
 
     // 百度地图API功能
@@ -204,6 +224,18 @@ $(document).ready(function () {
     $('#btnAddPage').click(function () {
 
         pageNum++;
+
+
+        var d1 = new DayModel();
+        d1.dayNumber = pageNum;
+        d1.isactive = true;
+        window.myapp.lushuViewModel.dayList.push(d1);
+
+        window.myapp.lushuViewModel.dayActive(1);
+
+        return;
+
+       
 
         $('#pageTab').append(
             $('<li><a href="#page' + pageNum + '">' +
