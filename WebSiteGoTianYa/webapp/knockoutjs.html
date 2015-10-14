@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="./js/knockout-3.3.0.js"></script>
+    <script>
+    </script>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr><th>First name</th><th>Last name</th></tr>
+        </thead>
+        <tbody data-bind="foreach: people">
+            <tr>
+                <td>
+                    <input type="text" data-bind="value: firstName" />
+                </td>
+                <td>
+
+                    <input type="text" data-bind="value: lastName" />
+
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+    <!-- 不能将监控属性与$index相加，否则页面直接打印$index的实现，$index貌似只能单个使用 -->
+    <ul data-bind="foreach: people">
+        <li data-bind="text: $index"></li>
+        <li data-bind="text: firstName() + lastName()"></li>
+    </ul>
+    <script type="text/javascript">
+
+        function peopleItem(p) {
+            var self = this;
+            self.firstName = ko.observable(p.firstName);
+            self.lastName = ko.observable(p.lastName);
+            return {
+                firstName: self.firstName,
+                lastName: self.lastName
+            };
+        };
+
+        var a = {
+            people: ko.observableArray([
+                ko.observable(new peopleItem({ firstName:"ddd", lastName:"dddd" })),
+                ko.observable({ firstName: ko.observable('Charles'), lastName: ko.observable('Charlesforth') }),
+                ko.observable({ firstName: ko.observable('Denise'), lastName: ko.observable('Dentiste') })
+            ])
+        };
+
+        ko.applyBindings(a);
+
+        setTimeout(function () {
+
+            a.people()[1]({ firstName: ko.observable("7777"), lastName: ko.observable("3333") });
+
+            a.people.push({ firstName: ko.observable('xxx'), lastName: ko.observable(new Date) });
+
+        }, 700);
+
+    </script>
+</body>
+</html>

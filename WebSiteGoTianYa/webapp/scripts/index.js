@@ -1,7 +1,33 @@
-function DayModel() {
-    this.dayNumber = 1;
-    this.isactive = true;
-    this.contacts = [];
+function DayModel(p) {
+
+    var self = this;
+    var _default = {
+        dayNumber: 1,
+        cities: [],
+        description: "",
+    };
+    p = $.extend({}, _default, p);
+
+    self.dayNumber = ko.observable(p.dayNumber);
+    self.cities = ko.observable(p.cities);
+    self.description = ko.observable(p.description);
+
+    self.addCity = function () {
+        self.cities().push("4444");
+    },
+
+    self.removeCity = function (p) {
+        self.cities.remove(p);
+    };
+
+    return {
+        dayNumber: self.dayNumber,
+        cities: self.cities,
+        description: self.description
+
+        , addCity: self.addCity
+        ,removeCity : self.removeCity
+    };
 }
 
 $(document).ready(function () {
@@ -13,53 +39,51 @@ $(document).ready(function () {
         var self = this;
 
         var dayList = ko.observableArray(),
+            dayActive = ko.observable(1),
+
             error = ko.observable(),
             startAdds = ko.observable({ name: "", point: null }),
             endAdds = ko.observable({ name: "", point: null }),
             contacts = ko.observableArray(),
             points = ko.observableArray(),      //new BMap.Point(106.521436,29.532288)
 
-            
             removePoint = function (i) {
-
                 self.myapp.lushuViewModel.contacts.remove(this);
             },
-            daySetActive = function (i) {
 
-                $.each(dayList, function (i, o) {
-
-                    console.log(o);
-
-                });
-
+            addDay = function (day) {
+                dayList.push(day);
+            },
+            removeDay = function () {
+                self.myapp.lushuViewModel.dayActive(1);
+                self.myapp.lushuViewModel.dayList.remove(this);
             };
 
-
         var viewmodel = {
+
             startAdds: startAdds,
             endAdds: endAdds,
             contacts: contacts,
 
             dayList: dayList,
-
-            dayActive: daySetActive,
+            dayActive: dayActive,
 
             error: error,
             points: points,
 
-            removePoint: removePoint
+            removePoint: removePoint,
+
+            addDay: addDay,
+            removeDay: removeDay
         };
 
         return viewmodel;
     })(ko);
 
-    ko.applyBindings(window.myapp.lushuViewModel);
-
-    var d1 = new DayModel();
-    d1.dayNumber = 1;
-    d1.isactive = true;
+    var d1 = new DayModel({ dayNumber: 1 });
     window.myapp.lushuViewModel.dayList.push(d1);
-    //window.myapp.lushuViewModel.dayList.push({ dayNumber: 2, isactive: false,  contacts: [] });
+
+    ko.applyBindings(window.myapp.lushuViewModel);
 
 
     // 百度地图API功能
@@ -205,17 +229,8 @@ $(document).ready(function () {
      */
     function reNumberPages() {
         pageNum = 1;
-        var tabCount = $('#pageTab > li').length;
-        $('#pageTab > li').each(function () {
-            var pageId = $(this).children('a').attr('href');
-            if (pageId == "#page1") {
-                return true;
-            }
-            pageNum++;
-            $(this).children('a').html('D ' + pageNum +
-                '<button class="close" type="button" ' +
-                'title="Remove this page">×</button>');
-        });
+        
+
     }
 
     /**
@@ -225,41 +240,12 @@ $(document).ready(function () {
 
         pageNum++;
 
-
-        var d1 = new DayModel();
-        d1.dayNumber = pageNum;
-        d1.isactive = true;
+        var d1 = new DayModel({ dayNumber: pageNum });
         window.myapp.lushuViewModel.dayList.push(d1);
 
-        window.myapp.lushuViewModel.dayActive(1);
-
-        return;
-
-       
-
-        $('#pageTab').append(
-            $('<li><a href="#page' + pageNum + '">' +
-                'D ' + pageNum +
-                '<button class="close" type="button" ' +
-                'title="Remove this page">×</button>' +
-                '</a></li>'));
-
-        $('#pageTabContent').append(
-            $('<div class="tab-pane" id="page' + pageNum +
-                '">Content page' + pageNum + '</div>'));
+        window.myapp.lushuViewModel.dayActive(pageNum);
 
         $('#page' + pageNum).tab('show');
-    });
-
-    /**
-     * Remove a Tab
-     */
-    $('#pageTab').on('click', ' li a .close', function () {
-        var tabId = $(this).parents('li').children('a').attr('href');
-        $(this).parents('li').remove('li');
-        $(tabId).remove();
-        reNumberPages();
-        $('#pageTab a:first').tab('show');
     });
 
     /**
@@ -267,7 +253,8 @@ $(document).ready(function () {
      */
     $("#pageTab").on("click", "a", function (e) {
         e.preventDefault();
-        $(this).tab('show');
+        var dayid = $(this).attr("dataid");
+        window.myapp.lushuViewModel.dayActive(dayid);
     });
 
 });
@@ -278,7 +265,7 @@ $(document).ready(function () {
     //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
     //var ue = UE.getEditor('editor');
 
-    UE.getEditor('editor', {
+    var ue = UE.getEditor('editor', {
         //这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
         toolbars: [['FullScreen', 'Source', 'Undo', 'Redo', 'Bold', 'test', 'simpleupload']],
         //focus时自动清空初始化时的内容
@@ -293,18 +280,45 @@ $(document).ready(function () {
         serverUrl: '/controller.ashx'
     });
 
+    $("#btnSaveEditor").bind("click", function () {
+
+        ue.ready(function () {
+
+            //设置编辑器的内容
+            //ue.setContent('hello');
+            //获取html内容，返回: <p>hello</p>
+            var html = ue.getContent();
+            //获取纯文本内容，返回: hello
+            //var txt = ue.getContentTxt();
+
+            var i = window.myapp.lushuViewModel.dayActive();
+            var currentDay = "#page" + i;
+            $("div.txtDescription", currentDay).html(html);
+
+            $('#ConfirmModel').modal('hide');
+
+        });
+    });
+
 
     $(document).on("click", "a.EditDescModal", function (ev) {
 
         $('#ConfirmModel').modal('show');
+
+        var i = window.myapp.lushuViewModel.dayActive();
+        var currentDay = "#page" + i;
+        var html = $("div.txtDescription", currentDay).html();
+        ue.setContent(html);
 
         ev.preventDefault();
     });
 
     //resize
     $("#allmap").height($(window).height() - 50);
+    $("#contentContainer").height($(window).height() - 50);
     $(window).resize(function () {
         $("#allmap").height($(window).height() - 50);
+        $("#contentContainer").height($(window).height() - 50);
     });
 
 });
