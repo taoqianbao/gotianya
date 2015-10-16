@@ -1,19 +1,27 @@
+function CityModel(p) {
+    var self = this;
+    self.name = ko.observable(p);
+    return {
+        name: self.name
+    };
+}
+
+
 function DayModel(p) {
 
     var self = this;
     var _default = {
         dayNumber: 1,
-        cities: [],
         description: "",
     };
     p = $.extend({}, _default, p);
 
     self.dayNumber = ko.observable(p.dayNumber);
-    self.cities = ko.observable(p.cities);
+    self.cities = ko.observableArray([""]);
     self.description = ko.observable(p.description);
 
     self.addCity = function () {
-        self.cities().push("4444");
+        self.cities.push(ko.observable(""));
     },
 
     self.removeCity = function (p) {
@@ -26,7 +34,7 @@ function DayModel(p) {
         description: self.description
 
         , addCity: self.addCity
-        ,removeCity : self.removeCity
+        , removeCity: self.removeCity
     };
 }
 
@@ -220,7 +228,6 @@ $(document).ready(function () {
 
 });
 
-
 $(document).ready(function () {
 
     window.pageNum = 1;
@@ -229,7 +236,7 @@ $(document).ready(function () {
      */
     function reNumberPages() {
         pageNum = 1;
-        
+
 
     }
 
@@ -312,6 +319,20 @@ $(document).ready(function () {
 
         ev.preventDefault();
     });
+
+
+    $(document).on("click", "a.EditPicModal", function (ev) {
+
+        $('#uploadPicModal').modal('show');
+
+        var i = window.myapp.lushuViewModel.dayActive();
+        var currentDay = "#page" + i;
+
+        window.uploader.refresh();
+
+        ev.preventDefault();
+    });
+
 
     //resize
     $("#allmap").height($(window).height() - 50);
