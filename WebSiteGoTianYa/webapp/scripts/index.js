@@ -6,6 +6,15 @@ function CityModel(p) {
     };
 }
 
+function ImageModel(p) {
+    var self = this;
+    self.name = ko.observable(p.name);
+    self.src = ko.observable(p.src);
+    return {
+        name: self.name,
+        src: self.src
+    }
+}
 
 function DayModel(p) {
 
@@ -17,24 +26,36 @@ function DayModel(p) {
     p = $.extend({}, _default, p);
 
     self.dayNumber = ko.observable(p.dayNumber);
-    self.cities = ko.observableArray([""]);
     self.description = ko.observable(p.description);
+    self.cities = ko.observableArray([]);
+    self.images = ko.observableArray([]);
 
     self.addCity = function () {
-        self.cities.push(ko.observable(""));
+        var city = new CityModel("");
+        self.cities.push(city);
     },
-
     self.removeCity = function (p) {
         self.cities.remove(p);
+    },
+    self.addImage = function (p) {
+        var img = new ImageModel(p);
+        self.images.push(img);
+    },
+    self.removeImage = function (p) {
+        self.images.remove(p);
     };
 
     return {
         dayNumber: self.dayNumber,
         cities: self.cities,
+        images: self.images,
         description: self.description
 
         , addCity: self.addCity
         , removeCity: self.removeCity
+
+        , addImage: self.addImage
+        , removeImage: self.removeImage
     };
 }
 
@@ -46,7 +67,8 @@ $(document).ready(function () {
 
         var self = this;
 
-        var dayList = ko.observableArray(),
+        var name = ko.observable(),
+            dayList = ko.observableArray(),
             dayActive = ko.observable(1),
 
             error = ko.observable(),
@@ -65,9 +87,19 @@ $(document).ready(function () {
             removeDay = function () {
                 self.myapp.lushuViewModel.dayActive(1);
                 self.myapp.lushuViewModel.dayList.remove(this);
+
+                reNameDay();
+            },
+            reNameDay = function () {
+                var daylist = dayList();
+                $.each(daylist, function (i, o) {
+                    o.dayNumber(i + 1);
+                });
             };
 
         var viewmodel = {
+
+            name: name,
 
             startAdds: startAdds,
             endAdds: endAdds,
@@ -125,7 +157,7 @@ $(document).ready(function () {
     var menu = new BMap.ContextMenu();
     var txtMenuItem = [
         {
-            text: '加入行程',
+            text: '加入途经点',
             callback: function (h, p) {
 
                 console.log(h, p);  //h.lat ,h.lng,     //p.x,p.y
@@ -199,9 +231,7 @@ $(document).ready(function () {
     }
 
 
-    $("#driveSearchBtn").bind("click", function () {
-        buildPath();
-    });
+    $("#driveSearchBtn").bind("click", buildPath);
 
     function search(start, end) {
 
@@ -209,6 +239,15 @@ $(document).ready(function () {
     }
 
     function buildPath() {
+
+        var p1 = window.myapp.lushuViewModel.startAdds();
+        var p2 = window.myapp.lushuViewModel.endAdds();
+
+        if (p1 == null || p1.point == null
+            || p2 == null || p2.point == null) {
+            alert("请设置起点和终点");
+            return;
+        }
 
         var points = window.myapp.lushuViewModel.contacts();
         var arrPoints = [];
@@ -219,35 +258,68 @@ $(document).ready(function () {
             arrPoints.push(p);
         });
 
-        var p1 = window.myapp.lushuViewModel.startAdds();
-        var p2 = window.myapp.lushuViewModel.endAdds();
-
         map.clearOverlays();
         driving.search(p1.point, p2.point, { waypoints: arrPoints });
+
+        buildStaticMap();
+
+
+
+
+
+    }
+
+    function buildStaticMap() {
+
+
+        //http://api.map.baidu.com/staticimage?center=116.403874,39.914888&width=500&height=500&zoom=11&paths=116.288891,40.004261;116.487812,40.017524;116.525756,39.967111;116.536105,39.872373&pathStyles=0xff0000,5,1
+
+        var p1 = window.myapp.lushuViewModel.startAdds();
+        var p2 = window.myapp.lushuViewModel.endAdds();
+        var points = window.myapp.lushuViewModel.contacts();
+
+
+        var keyPoints = [];
+        keyPoints.push(p1.point.lng + ',' + p1.point.lat);
+        $.each(points, function (i, o) {
+            var t1 = o.point;
+            keyPoints.push(t1.lng + ',' + t1.lat);
+        });
+        keyPoints.push(p2.point.lng + ',' + p2.point.lat);
+
+        var url = "http://api.map.baidu.com/staticimage?";
+        var parameters = [];
+        //parameters.push("center=116.403874,39.914888");
+        parameters.push("width=500");
+        parameters.push("height=500");
+        //parameters.push("zoom=11");
+        parameters.push("paths=" + keyPoints.join(";") + "");
+        parameters.push("pathStyles=0xff0000,5,1");
+        parameters.push("markers=" + keyPoints.join("|"));
+        parameters.push("markerStyles=l,S,0x00ff00|s,0xff0000");
+        url += parameters.join("&");
+        $("#staticImage").attr("src", url);
     }
 
 });
 
 $(document).ready(function () {
 
-    window.pageNum = 1;
-    /**
-     * Reset numbering on tab buttons
-     */
-    function reNumberPages() {
-        pageNum = 1;
-
-
-    }
-
     /**
      * Add a Tab
      */
     $('#btnAddPage').click(function () {
 
-        pageNum++;
+        var list = window.myapp.lushuViewModel.dayList();
+
+        var pageNum = 1;
+
+        if (list != null) {
+            pageNum = window.myapp.lushuViewModel.dayList().length + 1;
+        }
 
         var d1 = new DayModel({ dayNumber: pageNum });
+
         window.myapp.lushuViewModel.dayList.push(d1);
 
         window.myapp.lushuViewModel.dayActive(pageNum);
@@ -264,9 +336,6 @@ $(document).ready(function () {
         window.myapp.lushuViewModel.dayActive(dayid);
     });
 
-});
-
-$(document).ready(function () {
 
     //实例化编辑器
     //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例
@@ -284,7 +353,7 @@ $(document).ready(function () {
         //默认的编辑区域高度
         initialFrameHeight: 300,
         //更多其他参数，请参考ueditor.config.js中的配置项
-        serverUrl: '/controller.ashx'
+        serverUrl: '/server/ueditorcontroller.ashx'
     });
 
     $("#btnSaveEditor").bind("click", function () {
@@ -307,7 +376,6 @@ $(document).ready(function () {
         });
     });
 
-
     $(document).on("click", "a.EditDescModal", function (ev) {
 
         $('#ConfirmModel').modal('show');
@@ -319,7 +387,6 @@ $(document).ready(function () {
 
         ev.preventDefault();
     });
-
 
     $(document).on("click", "a.EditPicModal", function (ev) {
 
@@ -333,13 +400,11 @@ $(document).ready(function () {
         ev.preventDefault();
     });
 
-
     //resize
-    $("#allmap").height($(window).height() - 50);
-    $("#contentContainer").height($(window).height() - 50);
     $(window).resize(function () {
+    });
+    function onResize() {
         $("#allmap").height($(window).height() - 50);
         $("#contentContainer").height($(window).height() - 50);
-    });
-
+    }
 });

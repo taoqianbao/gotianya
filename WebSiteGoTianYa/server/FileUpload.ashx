@@ -32,8 +32,8 @@ using System.Text;
         private void SaveFile()
         {
             string DatePath = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString();
-            string basePath = "/Upload/CompanyProductImages/"+DatePath+"/";
-            string basePath1 = "/Upload/CompanyProductImages/" + DatePath + "/";
+            string basePath = "/Upload/lushu/"+DatePath+"/";
+            string basePath1 = "/Upload/lushu/" + DatePath + "/";
             string name = string.Empty;
             basePath =System.Web.HttpContext.Current.Server.MapPath(basePath);
            

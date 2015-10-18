@@ -385,7 +385,6 @@
 
             percent = total ? loaded / total : 0;
 
-
             spans.eq(0).text(Math.round(percent * 100) + '%');
             spans.eq(1).css('width', Math.round(percent * 100) + '%');
             updateStatus();
@@ -518,11 +517,18 @@
 
         };
 
+        uploader.onUploadSuccess = function (file, response) {
+            //console.log("onUploadSuccess", file, response);
+            var dayActive = window.myapp.lushuViewModel.dayActive();
+            window.myapp.lushuViewModel.dayList()[dayActive -1].addImage({ name: file.name, src: response.id });
+        };
+
         uploader.on('all', function (type) {
             var stats;
             switch (type) {
                 case 'uploadFinished':
                     setState('confirm');
+                    uploader.reset();
                     break;
 
                 case 'startUpload':

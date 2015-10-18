@@ -14,11 +14,9 @@
     <link href="./style/uploadDemo.css" rel="stylesheet" />
 
     <style type="text/css">
-        body,
-        html,
         #allmap {
             width: 100%;
-            height: 100%;
+            min-height: 400px;
             overflow: hidden;
             margin: 0;
             font-family: "微软雅黑";
@@ -50,7 +48,8 @@
         }
 
         ul.tourlist {
-            clear: both; padding:0;
+            clear: both;
+            padding: 0;
         }
 
             ul.tourlist li {
@@ -191,7 +190,6 @@
 </head>
 
 <body>
-    <span data-bind="text:ko.toJSON(window.myapp.lushuViewModel)"></span>
     <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
         <div class="container">
             <div class="navbar-header">
@@ -206,7 +204,7 @@
             <nav id="bs-navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li>
-                        <input type="text" name="tbname" id="tbname" />
+                        <input type="text" name="tbname" id="tbname" data-bind="value:name" />
                     </li>
                     <li class="active">
                         <a href="../javascript/">保存</a>
@@ -232,27 +230,7 @@
 
             <div class="row">
 
-                <div class="col-md-6" id="contentContainer" style="overflow-y:auto;">
-
-                    <!--<div class="container-fluid" style="margin:10px">
-                        <div class="row">
-                            <form>
-                                <div class="col-md-5">
-                                    开始：
-                                    <input type="text" name="tbStartAdd" id="tbStartAdd" value="上海" data-bind="value:startAdds" />
-                                </div>
-                                <div class="col-md-5">
-                                    结束：
-                                    <input type="text" name="tbEndAdd" id="tbEndAdd" value="北京" data-bind="value:endAdds" />
-                                </div>
-                                <div class="col-md-2">
-                                    <input id="btnBuildPath" type="button" name="" value="生成路线" class="btn btn-primary btn-sm" />
-                                </div>
-
-                            </form>
-                        </div>
-                    </div>-->
-
+                <div class="col-xs-6" id="contentContainer" style="overflow-y:auto;">
                     <div class="container-fluid" style="margin:10px;">
                         <div id="drive_search_box" class="route-search-box">
                             <form class="route-search-from" name="drive_form">
@@ -261,14 +239,13 @@
 
                                     <p class="route-input start" data-bind="with:startAdds">
                                         <i></i>
-                                        <input type="text" name="drive_start_wd" id="drive_start_input" value="" placeholder="请在地图中添加起点" autocomplete="off" maxlength="256" data-from="start" data-bind="value:name" readonly>
-                                        <!--<span id="drive-add-btn" class="route-input-add" title="添加途经点"></span>-->
+                                        <input type="text" name="drive_start_wd" id="drive_start_input" value="" placeholder="请在地图中右键添加起点" autocomplete="off" maxlength="256" data-from="start" data-bind="value:name" readonly>
                                     </p>
 
                                     <div data-bind="foreach: contacts">
                                         <p class="route-input through">
                                             <i></i>
-                                            <input type="text" name="drive_through_wd" value="" placeholder="请输入驾车途经点" autocomplete="off" maxlength="256" data-from="through" data-bind="value:name" readonly>
+                                            <input type="text" name="drive_through_wd" value="" placeholder="请在地图中右键添加途经点" autocomplete="off" maxlength="256" data-from="through" data-bind="value:name" readonly>
                                             <span class="route-input-mask-for-ie8"></span>
                                             <span class="route-input-remove" data-index="0" title="移除途经点" data-bind="click:$parent.removePoint"></span>
                                         </p>
@@ -276,42 +253,19 @@
 
                                     <p class="route-input end" data-bind="with:endAdds">
                                         <i></i>
-                                        <input type="text" name="drive_end_wd" id="drive_end_input" value="" placeholder="请在地图中添加终点" autocomplete="off" maxlength="256" data-from="end" data-bind="value:name" readonly>
+                                        <input type="text" name="drive_end_wd" id="drive_end_input" value="" placeholder="请在地图中右键添加终点" autocomplete="off" maxlength="256" data-from="end" data-bind="value:name" readonly>
                                     </p>
-                                    <!--
-
-                                        <p class="route-input through">
-                                        <i></i>
-                                        <input type="text" name="drive_through_wd" value="" placeholder="请输入驾车途经点" autocomplete="off" maxlength="256" data-from="through">
-                                        <span class="route-input-mask-for-ie8"></span>
-                                        <span class="route-input-remove" data-index="0" title="移除途经点"></span>
-                                    </p>
-                                    <p class="route-input through">
-                                        <i></i>
-                                        <input type="text" name="drive_through_wd" value="" placeholder="请输入驾车途经点" autocomplete="off" maxlength="256" data-from="through">
-                                        <span class="route-input-mask-for-ie8"></span>
-                                        <span class="route-input-remove" data-index="0" title="移除途经点"></span>
-                                    </p>
-                                    <p class="route-input end">
-                                        <i></i>
-                                        <input type="text" name="drive_end_wd" id="drive_end_input" value="" placeholder="请输入驾车终点" autocomplete="off" maxlength="256" data-from="end">
-                                    </p>-->
-
                                 </div>
 
-                                <input class="route-submit" value="搜索" id="driveSearchBtn" title="" type="button">
+                                <input class="route-submit" value="生成路线" id="driveSearchBtn" title="" type="button">
 
                             </form>
                         </div>
                     </div>
 
-
                     <div>
                         <div style="margin-bottom:10px;">
                             <button id="btnAddPage" class="btn btn-primary btn-sm">新增一天</button>
-                            <!-- Button trigger modal
-                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Launch demo modal</button>
-                            -->
                         </div>
 
                         <script type="text/html" id="tabTitle-template">
@@ -329,34 +283,41 @@
                             <div class="tab-pane" data-bind="attr: { id: 'page' + dayNumber() }, css: { active: $parent.dayActive() == dayNumber() }">
                                 <div class="clearfix">
                                     <h2>
-                                       <span data-bind="text: dayNumber()"></span> 行程：
+                                        行程 (第<span data-bind="text: dayNumber()"></span>天)：
                                     </h2>
-                                    <button type="button" data-bind="click: addCity">添加行程点</button>
+                                    <button type="button" data-bind="click: addCity" class="btn btn-primary btn-sm">添加行程点</button>
                                     <ul class="tourlist" data-bind="foreach: cities">
                                         <li>
-                                            <input type="text" name="txtAreaName" data-bind="value:$data" />
+                                            <input type="text" name="txtAreaName" data-bind="value: name" placeholder="请输入行程点" />
                                             <a href="#" style="float:right" data-bind="click:$parent.removeCity">删除</a>
                                         </li>
                                     </ul>
                                 </div>
                                 <div class="clearfix">
+
+                                    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                                    </div>
+
                                     <h2>
                                         描述：
                                         <a href="javascript:;" class="EditDescModal" style="float:right;">编辑</a>
                                     </h2>
                                     <div class="txtDescription" data-bind="html: description">
-                                        
                                     </div>
                                 </div>
                                 <div>
                                     <h2>
                                         图片：
-                                        <a href="javascript:;" class="EditPicModal" style="float:right;">编辑</a>
+                                        <a href="javascript:;" class="EditPicModal" style="float:right;">上传</a>
                                     </h2>
-                                    <div>
-                                        <a href="#">
-                                            <img src="./upload/555a0f88-89dd-4b31-8aac-82a4e50c6786.jpg" width="100" />
-                                        </a>
+                                    <div class="citieslist" data-bind="foreach: images">
+                                        <div>
+                                            <a href="#" data-bind="attr:{ href: src }" target="_blank">
+                                                <img src="" width="100" height="100" data-bind="attr:{ src: src }" />
+                                            </a>
+                                            <input type="text" name="imgname" data-bind="value: name" placeholder="请输入地名" />
+                                            <a href="#" style="float:right" data-bind="click:$parent.removeImage">删除</a>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -365,110 +326,31 @@
                         </script>
 
                         <div>
-
                             <ul id="pageTab" class="nav nav-tabs" data-bind="template: { name: 'tabTitle-template', foreach: dayList }">
                                 <li class="active">
                                     <a href="#page1" data-toggle="tab">D1</a>
                                 </li>
                             </ul>
                             <div id="pageTabContent" class="tab-content" data-bind="template: { name: 'tabPage-template', foreach: dayList }">
-                                
-                                <div class="tab-pane active" id="page1">
-                                    <div class="clearfix">
-                                        <h2>
-                                            行程：<span style="font-size:12px;">(右键地图添加行程)</span>
-                                        </h2>
-                                        <!-- ko if: contacts -->
-                                        <ul class="tourlist" data-bind="foreach: contacts">
-                                            <li>
-                                                <a data-bind="text:name">xxx</a>
-                                                <a href="#" style="float:right" data-bind="click:$parent.removePoint">删除</a>
-                                            </li>
-                                        </ul>
-                                        <!-- /ko -->
-                                    </div>
-                                    <div class="clearfix">
-                                        <h2>
-                                            描述：
-                                            <a href="javascript:;" class="EditDescModal" style="float:right;">编辑</a>
-                                        </h2>
-                                        <div class="txtDescription">
-                                            想要只用一种颜色来形容云贵高原的秋天是件很难的事，秋天，各地有着极其丰富的色彩，那些森林、那些湖泊、那些雪山、那些草甸，都因为有了色彩的衬托而变得让人心跳加速。浓浓的秋意袭来，天气晴朗，空气洁净，行车于崇山峻岭当中，群山已经被秋色渲染，绿色、金色、红色缤纷交错，这一条色彩的旅程，7天时间，流连期间，甚是美好。
-                                            <br>
-                                            从成都出发，趁着秋日微凉，路上十分顺利，成都到昆明的路况以高速为主，路况总体不错，如果是长假出行遇到车流量较大，可能路上耗时会略长一些，建议带些干粮和矿泉水上路，以备不时之需。
-                                            <br>
-                                            一天的奔波，傍晚到达昆明市区，来到云南的第一顿晚餐，选择了当地很有名气的一家云南菜馆，福照楼汽锅鸡饭店。听名字也知道这家店的招牌菜便是汽锅鸡了，餐厅的生意很好，用餐时间前来基本上都是要等座位的，不过上菜的速度却值得称道，点完菜不到10分钟菜就上桌了，汽锅鸡果然名不虚传，除了普通的鸡还有乌鸡，当然价格也要贵一些，鸡肉酥软，鲜美入味，一锅鸡最后吃得一滴汤都不剩了。除了汽锅鸡，凉米线也值得一提，米线上的浇头很丰富，量很足，点小份就足够了，入口凉滑爽口，酱料也很好吃。一顿晚餐吃下来，胃得到了极大的满足。
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h2>
-                                            图片：
-                                            <a href="javascript:;" class="EditPicModal" style="float:right;">编辑</a>
-                                        </h2>
-                                        <div>
-                                            <a href="#">
-                                                <img src="http://img2.xdpie.com/555a0f88-89dd-4b31-8aac-82a4e50c6786.jpg" width="100" />
-                                            </a>
-                                            <a href="#">
-                                                <img src="http://img2.xdpie.com/555a0f88-89dd-4b31-8aac-82a4e50c6786.jpg" width="100" />
-                                            </a>
-                                            <a href="#">
-                                                <img src="http://img2.xdpie.com/555a0f88-89dd-4b31-8aac-82a4e50c6786.jpg" width="100" />
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <!-- Nav tabs
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active">
-                                <a href="#tab-d1" aria-controls="home" role="tab" data-toggle="tab">D1<i class="fa fa-times" tabclose="tab-d1"></i></a>
-                            </li>
-                            <li role="presentation"><a href="#tab-d2" aria-controls="profile" role="tab" data-toggle="tab">D2</a>
-                            </li>
-                            <li role="presentation"><a href="#tab-d3" aria-controls="messages" role="tab" data-toggle="tab">D3</a>
-                            </li>
-                            <li role="presentation"><a href="#tab-d4" aria-controls="settings" role="tab" data-toggle="tab">D4</a>
-                            </li>
-                        </ul>
-
-                        <!-- Tab panes -- >
-                        <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" id="tab-d1">
-                                <div>
-                                    <form>
-                                        <div>
-                                            <input type="text" name="tbDay" />
-                                        </div>
-                                        <div>
-                                            <textarea></textarea>
-                                        </div>
-                                        <div>
-                                            <input type="file" name="tbFile" />
-                                        </div>
-                                    </form>
-                                </div>
-
-                            </div>
-                            <div role="tabpanel" class="tab-pane" id="tab-d2">
-                            </div>
-                            <div role="tabpanel" class="tab-pane" id="tab-d3">
-                            </div>
-                            <div role="tabpanel" class="tab-pane" id="tab-d4">
                             </div>
                         </div>
-                        -->
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div id="allmap"></div>
+
+                    <div id="staticMap">
+                        <img id="staticImage" src="" />
                     </div>
 
-
                 </div>
-                <div class="col-md-6">
-                    <div id="allmap"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+
+                    <span data-bind="text:ko.toJSON(window.myapp.lushuViewModel)"></span>
+
                 </div>
             </div>
         </div>
@@ -524,7 +406,7 @@
                     <h4 class="modal-title" id="uploadPicModalLabel">上传图片</h4>
                 </div>
                 <div class="modal-body">
-                    
+
                     <!--头部，相册选择和格式选择-->
                     <div id="uploader">
                         <div class="queueList">
@@ -544,10 +426,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <!--<div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
+                </div>-->
             </div>
         </div>
     </div>
